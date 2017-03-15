@@ -3,11 +3,13 @@
 
 /*include block*/
 #include <stdio.h>
+#include <sys/time.h>
 
 /*structure and type defs*/
 struct entity {
     unsigned char name[64];
     unsigned long maxhp;
+    unsigned int level;
     signed long health; /*signed because if it were unsigned, it would wrap around, making attacking require additional checks. may change in update*/
     unsigned int strength;
     unsigned int curstr;
@@ -25,13 +27,20 @@ ent *elist[256];
 
 /*function declarations*/
 void newgame(void);
+int baserng(int); /*generate random number, 1-10*/
+int stdrng(void); /*typically used rng; character based, uses baserng*/
 
-
-
-
-
-
-
+int stdrng(void) {
+    extern ent *elist[];
+    ent *player;
+    player = elist[0];
+    int seed;
+    seed = ((player->level + player->strength + player->defense + player->magic)/4);
+    return rng(rng(rng(seed))+seed);
+    }
+int rng(int seed) {
+    return (((time(NULL)+seed)%10)+1);
+    }
 void newgame(void) {
     extern ent *elist[];
     ent player;
