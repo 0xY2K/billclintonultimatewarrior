@@ -21,14 +21,46 @@ struct entity {
     unsigned char inventory[256]; /* ^ */
     };
 typedef struct entity ent;
+struct faction {
+    unsigned char name[64];
+    ent *leader;
+    };
+typedef struct faction fact;
 
-/*entities are external vars, this list keeps track of them*/
+/*entities are external vars, these lists keeps track of them*/
 ent *elist[256];
-
+ent *essentials[256];
+ent *nlist[256]; /*null list used in clearing elist*/
 /*function declarations*/
 void newgame(void);
 int baserng(int); /*generate random number, 1-10*/
 int stdrng(void); /*typically used rng; character based, uses baserng*/
+void clearcharbuffer(void); /*clears the entity buffer, copies essentials into it*/
+void lcopy(ent **, ent **, int); /*copies array 1 to array 2*/
+
+void lcopy(ent **l1, ent **l2, int buffer) {
+    int i = 0;
+    while(buffer-- ){
+        *(l2+i) = *(l1+i);
+        i++;
+        }
+    return;
+    }
+
+
+void clearcharbuffer(void) {
+    extern ent *essentials[];
+    extern ent *elist[];
+    extern ent *nlist[];
+    lcopy(nlist, elist, 256); /*clears elist*/
+    lcopy(essentials, elist, 256); /*refills elist*/
+
+
+    }
+
+
+int main(){newgame();}
+
 
 int stdrng(void) {
     extern ent *elist[];
@@ -53,6 +85,7 @@ void newgame(void) {
     player.curdef = 5;
     player.magic = 5;
     player.curmag = 5;
-    elist[0] = &player;
+    essentials[0] = &player;
     printf("It is a dark time in America. A dark time of fear, war, and plague.\nSorrow runs rampant, as fear courses through the veins of innocence.\nBarack Hussein Obama has just been elected.\nOnly you, Bill Clinton, can stop this massacre of American values.\n\n");
+    clearcharbuffer();
     }
