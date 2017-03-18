@@ -1,5 +1,5 @@
 /* BILL CLINTON: ULTIMATE WARRIOR */
-/* Created by alfalfa */
+/* Created by quael */
 
 /*include block*/
 #include <stdio.h>
@@ -26,6 +26,14 @@ struct faction {
     ent *leader;
     };
 typedef struct faction fact;
+struct area {
+    ent *enemies[32];
+    char north[32]; /*these strings are "NULL" if none, filename if one*/
+    char south[32];
+    char east[32];
+    char west[32];
+    };
+typedef struct area room;
 
 /*entities are external vars, these lists keeps track of them*/
 ent *elist[256];
@@ -37,6 +45,55 @@ int baserng(int); /*generate random number, 1-10*/
 int stdrng(void); /*typically used rng; character based, uses baserng*/
 void clearcharbuffer(void); /*clears the entity buffer, copies essentials into it*/
 void lcopy(ent **, ent **, int); /*copies array 1 to array 2*/
+room *loadroom(char *); /*loads room into room pointer*/
+int iseq(char *, char *); /*checks for equality in strings*/
+void loadfile(room *, char *); /*loads rooms*/
+char * addstr(char *, char *); /*add strings*/
+
+char * addstr(char *str1, char *str2) {
+    static nstr[64];
+    int i, i2 = 0;
+    while(*(str+i)!='\0' && i<=64) {
+        nstr[i] = *(str+i);
+        i++;
+        }
+    while(*(str2 + i2)!='\0' && i<=64) {
+        nstr[i] = *(str1+i2);
+        i++;
+        i2++;
+        }
+    return nstr;
+    }
+void loadfile(room *rid, char *str) {
+    FILE *fp;
+    fp = fopen(addstr("rooms/", str),"r");
+    /*start here*/
+
+
+
+    }
+
+int iseq(char *str1, char *str2) {
+    int i = 0;
+    while(*(str1+i) == *(str2+i)) {
+        if(*(str1+i) == '\0') {
+            return 1;
+            }
+        i++;
+        }
+    return 0;
+    }
+room *loadroom(char *rid) {
+    if(!(iseq("NULL", rid))) {
+        return NULL;
+        }
+    static room croom;
+    loadfile(croom, rid);
+    return croom;
+    }
+
+
+
 
 void lcopy(ent **l1, ent **l2, int buffer) {
     int i = 0;
@@ -54,8 +111,7 @@ void clearcharbuffer(void) {
     extern ent *nlist[];
     lcopy(nlist, elist, 256); /*clears elist*/
     lcopy(essentials, elist, 256); /*refills elist*/
-
-
+    return;
     }
 
 
